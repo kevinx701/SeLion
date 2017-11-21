@@ -15,14 +15,11 @@
 
 package com.paypal.selion.configuration;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.paypal.selion.internal.platform.grid.MobileNodeType;
+import com.paypal.selion.logger.SeLionLogger;
+import com.paypal.selion.platform.grid.EventListener;
+import com.paypal.selion.platform.grid.browsercapabilities.DefaultCapabilitiesBuilder;
+import com.paypal.selion.platform.html.support.events.ElementEventListener;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.StringUtils;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -31,11 +28,13 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.ISuite;
 import org.testng.ITestContext;
 
-import com.paypal.selion.internal.platform.grid.MobileNodeType;
-import com.paypal.selion.logger.SeLionLogger;
-import com.paypal.selion.platform.grid.EventListener;
-import com.paypal.selion.platform.grid.browsercapabilities.DefaultCapabilitiesBuilder;
-import com.paypal.selion.platform.html.support.events.ElementEventListener;
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * A configuration object that contains properties needed throughout SeLion. These options can be configured via the
@@ -760,8 +759,28 @@ public final class Config {
          * To print debug info (about Browser/Selenium Version/Client OS) for user.<br>
          * Default is set to <b>true</b>
          */
-        PRINT_DEBUG_INFO("printDebugInfo", "true", true);
-
+        PRINT_DEBUG_INFO("printDebugInfo", "true", true),
+    
+        /**
+         * Merchant header Element locator
+         */
+        MERCHANT_HEADER("merchantHeader", "#mer-header", false),
+    
+        /**
+         * Merchant footer Element locator
+         */
+        MERCHANT_FOOTER("merchantFooter", ".footer", false),
+    
+        /**
+         * Personal header Element locator
+         */
+        PERSONAL_HEADER("personalHeader", ".vx_globalNav-main.globalNav-main", false),
+    
+        /**
+         * Personal footer Element locator
+         */
+        PERSONAL_FOOTER("personalFooter", ".footer", false);
+        
         private String name;
         private String defaultValue;
         private boolean isGlobalScopeOnly;

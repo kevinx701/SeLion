@@ -15,23 +15,24 @@
 
 package com.paypal.selion.reports.runtime;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-
-import org.testng.Reporter;
-import org.testng.annotations.Test;
-
 import com.paypal.selion.annotations.MobileTest;
 import com.paypal.selion.annotations.WebTest;
+import com.paypal.selion.configuration.Config;
 import com.paypal.selion.internal.reports.model.BaseLog;
 import com.paypal.selion.internal.reports.model.PageContents;
 import com.paypal.selion.logger.SeLionLogger;
 import com.paypal.selion.platform.grid.Grid;
 import com.paypal.selion.reports.services.LogAction;
 import com.paypal.test.utilities.logging.SimpleLogger;
+import org.testng.Reporter;
+import org.testng.annotations.Test;
+
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.logging.Level;
 
 /**
  * A TestNG compatible message logger. Use this class to log messages to the report output and associate them with a
@@ -61,7 +62,7 @@ public final class SeLionReporter {
 
     /**
      * Sets string path to the output
-     * 
+     *
      * @param rootFolder
      *            path to the output folder
      */
@@ -85,7 +86,7 @@ public final class SeLionReporter {
 
     /**
      * Creates an instance of {@link BaseLog}. Calls any {@link LogAction}s which are hooked in.
-     * 
+     *
      * @param saveSrc
      *            Save the current page source <code>true/false</code>. Requires an active {@link Grid} session.
      * @return A {@link BaseLog} subclass that represents the actual log that was generated.
@@ -113,7 +114,7 @@ public final class SeLionReporter {
 
     /**
      * Generate a log message and send it to the TestNG {@link Reporter}
-     * 
+     *
      * @param takeScreenshot
      *            Take a screenshot <code>true/false</code>. Requires an active {@link Grid} session.
      * @param saveSrc
@@ -128,10 +129,18 @@ public final class SeLionReporter {
             log.setScreen(null);
 
             if (takeScreenshot) {
-                // screenshot
-                PageContents screen = new PageContents(Gatherer.takeScreenshot(Grid.driver()), getBaseFileName());
-                screenshotPath = saver.saveScreenshot(screen);
-                log.setScreen(screenshotPath);
+                if (Config.getConfigProperty(Config.ConfigProperty.BROWSER).equalsIgnoreCase("*firefox")) {
+                    // screenshot
+                    PageContents screen = new PageContents(Gatherer.takeScreenshot(Grid.driver()), getBaseFileName());
+                    screenshotPath = saver.saveScreenshot(screen);
+                    log.setScreen(screenshotPath);
+                } else {
+                    // screenshot
+                    String fileName = String.format("screenshots/%s.png", UUID.randomUUID().toString());
+                    File savedFile = new File("test-output/" + fileName);
+                    ImageIO.write(Gatherer.takeStrategyScreenshot(Grid.driver()), "PNG", savedFile);
+                    log.setScreen(fileName);
+                }
             }
             // creating a string from all the info for the report to deserialize
             Reporter.log(log.toString());
@@ -145,7 +154,7 @@ public final class SeLionReporter {
      * @param action
      *            A {@link LogAction} object that represents the custom log action to be invoked when
      *            {@link SeLionReporter#log(String, boolean, boolean)} gets called.
-     * 
+     *
      */
     public static void addLogAction(LogAction action) {
         if (!actionList.contains(action)) {
@@ -155,7 +164,7 @@ public final class SeLionReporter {
 
     /**
      * Generates log entry with message provided
-     * 
+     *
      * @param message
      *            Entry description
      * @param takeScreenshot
@@ -167,7 +176,7 @@ public final class SeLionReporter {
 
     /**
      * Generates log entry with message provided
-     * 
+     *
      * @param message
      *            Entry description
      * @param takeScreenshot

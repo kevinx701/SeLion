@@ -15,18 +15,17 @@
 
 package com.paypal.selion.internal.platform.asserts;
 
-import java.util.logging.Level;
-
-import org.testng.IInvokedMethod;
-import org.testng.IInvokedMethodListener;
-import org.testng.ITestResult;
-import org.testng.Reporter;
-
 import com.paypal.selion.configuration.ListenerInfo;
 import com.paypal.selion.configuration.ListenerManager;
 import com.paypal.selion.logger.SeLionLogger;
 import com.paypal.selion.platform.asserts.SeLionSoftAssert;
 import com.paypal.test.utilities.logging.SimpleLogger;
+import org.testng.IInvokedMethod;
+import org.testng.IInvokedMethodListener;
+import org.testng.ITestResult;
+import org.testng.Reporter;
+
+import java.util.logging.Level;
 
 /**
  * <code>SeLionAssertsListener</code> holds all the test level logic for SeLion asserts.
@@ -70,7 +69,7 @@ public class SeLionAssertsListener implements IInvokedMethodListener {
                 return;
             }
             // Assert all the soft asserts captured as part of this test method instance.
-            if (Reporter.getCurrentTestResult() != null) {
+            if (Reporter.getCurrentTestResult() != null && Reporter.getCurrentTestResult().isSuccess()) {
                 SeLionSoftAssert sa = (SeLionSoftAssert) Reporter.getCurrentTestResult().getAttribute(
                         SeLionSoftAssert.SOFT_ASSERT_ATTRIBUTE_NAME);
                 if (sa != null) {
